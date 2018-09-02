@@ -11,6 +11,8 @@ DECLARE_DELEGATE_OneParam(FIntDelegate, int);
 class ALD42GameModeBase;
 class UImage;
 class AHuman;
+class AMyPawn;
+class UCameraComponent;
 /**
  * 
  */
@@ -35,18 +37,44 @@ private:
 
 	virtual void SetupInputComponent() override;
 
+	void MoveForward(float AxisValue);
+	void MoveRight(float AxisValue);
+	void Turn(float AxisValue);
+	void LookUp(float AxisValue);
+	
+	void OnPressFireButton();
+	void OnPressQuitButton();
+	void OnPressSkillButton(int SkillID);
+
 	float CrosshairViewportPosX = 0.5f;
 	float CrosshairViewportPosY = 0.5f;
 	float CrosshairLineTracingRange = 1000.0f;
 
 	ALD42GameModeBase * GameMode = nullptr;
 
-	UImage* TargetGenderImage;
+	UImage* TargetGenderImage = nullptr;
 
 	UPROPERTY(EditAnywhere)
-	UTexture2D * ManIconTexture;
+	UTexture2D * ManIconTexture = nullptr;
 	UPROPERTY(EditAnywhere)
-	UTexture2D * WomanIconTexture;
+	UTexture2D * WomanIconTexture = nullptr;
 
-	void TriggerSkill(int SkillID);
+	UPROPERTY(EditAnywhere)
+	USoundBase * ChangeGenderSound = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	USoundBase * CondomGiveawaySound = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	USoundBase * OneChildPolicySound = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	float MoveInputMultiplier = 200000.0f;
+
+	UPROPERTY(EditAnywhere)
+	float TurnInputMultiplier = 8.0f;
+
+	AMyPawn * ControlledPlayer = nullptr;
+
+	UCameraComponent * PlayerCameraComponent = nullptr;
 };

@@ -47,16 +47,16 @@ void ALD42GameModeBase::PreInitializeComponents() {
 			break;
 		}
 	}
+
+	GUIWidget = CreateWidget<UGUIWidget>(GetWorld(), GUIWidgetClass);
+	GUIWidget->AddToViewport(UMyStaticLibrary::GUIWidgetZOrder);
+	GUIWidget->RestartButton->OnClicked.AddDynamic(this, &ALD42GameModeBase::RestartGame);
 }
 
 void ALD42GameModeBase::BeginPlay() {
 	Super::BeginPlay();
 
 	GameState = EGameState::InGame;	
-
-	GUIWidget = CreateWidget<UGUIWidget>(GetWorld(), GUIWidgetClass);
-	GUIWidget->AddToViewport(UMyStaticLibrary::GUIWidgetZOrder);
-	GUIWidget->RestartButton->OnClicked.AddDynamic(this, &ALD42GameModeBase::RestartGame);
 
 	for (int Gender = 0; Gender <= 1; Gender++) {
 		for (int i = 0; i < HumanSpawnNumberPerGender; i++) {
@@ -119,15 +119,31 @@ void ALD42GameModeBase::Tick(float DeltaSeconds) {
 	if (IsOutOfSpace()) {
 		GUIWidget->OnGameOver(EGameOverType::Failure);
 		GameState = EGameState::GameOver;
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			FailureSound,
+			UGameplayStatics::GetPlayerPawn(GetWorld(),0)->GetActorLocation(),
+			//FVector::ZeroVector,
+			FRotator::ZeroRotator);
 	}
 	else {
 		if (NumberOfWomen == 0) {
 			GUIWidget->OnGameOver(EGameOverType::GaySuccess);
 			GameState = EGameState::GameOver;
+			UGameplayStatics::PlaySoundAtLocation(
+				GetWorld(),
+				SuccessSound,
+				UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorLocation(),
+				FRotator::ZeroRotator);
 		}
 		else if (NumberOfMen == 0) {
 			GUIWidget->OnGameOver(EGameOverType::LesbianSuccess);
 			GameState = EGameState::GameOver;
+			UGameplayStatics::PlaySoundAtLocation(
+				GetWorld(),
+				SuccessSound,
+				UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorLocation(),
+				FRotator::ZeroRotator);
 		}
 	}
 
@@ -149,6 +165,12 @@ bool ALD42GameModeBase::IsOutOfSpace() {
 
 void ALD42GameModeBase::RestartGame() {
 	UGameplayStatics::OpenLevel(GetWorld(), UMyStaticLibrary::GameMapName);
+
+	//UGameplayStatics::PlaySoundAtLocation(
+	//	GetWorld(),
+	//	RestartGameSound,
+	//	UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorLocation(),
+	//	FRotator::ZeroRotator);
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	PlayerController->SetInputMode(FInputModeGameOnly());
@@ -193,9 +215,8 @@ void ALD42GameModeBase::UpdatePopulationTexts() {
 }
 
 void ALD42GameModeBase::ActivateCondomGiveaway() {
-	UE_LOG(LogTemp, Warning, TEXT("ALD42GameModeBase::ActivateCondomGiveaway"));
 
-	if (CondomGiveawayCTTimer>0) return;
+	//if (CondomGiveawayCTTimer>0) return;
 
 	IsCondomGiveawayActive = true;
 	CondomGiveawayBuffTimer = CondomGiveawayBuffDuration;
@@ -203,9 +224,8 @@ void ALD42GameModeBase::ActivateCondomGiveaway() {
 }
 
 void ALD42GameModeBase::ActivateOneChildPolicy() {
-	UE_LOG(LogTemp, Warning, TEXT("ALD42GameModeBase::ActivateOneChildPolicy"));
 
-	if (OneChildPolicyCTTimer>0) return;
+	//if (OneChildPolicyCTTimer>0) return;
 
 	IsOneChildPolicyActive = true;
 	OneChildPolicyBuffTimer = OneChildPolicyBuffDuration;

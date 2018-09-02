@@ -63,5 +63,5 @@ public:
 
 	static const FString OneChildPolicySlogan2;
 
-	//static const float HumanSpawnHeight;
+	static const FString PlayerCameraComponentName;
 };

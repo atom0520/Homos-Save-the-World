@@ -48,4 +48,4 @@ const FString UMyStaticLibrary::OneChildPolicySlogan1 = "Any family with more th
 
 const FString UMyStaticLibrary::OneChildPolicySlogan2 = "Raise as many pigs as you want but only one child is allowed!";
 
-//const float UMyStaticLibrary::HumanSpawnHeight = 512.0f;
+const FString UMyStaticLibrary::PlayerCameraComponentName = "Camera";

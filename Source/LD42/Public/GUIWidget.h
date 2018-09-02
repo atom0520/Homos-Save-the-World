@@ -32,8 +32,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString NumberOfMenText;
 
-
-
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UImage* CrosshairImage = nullptr;
 
@@ -55,13 +53,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* RestartButton = nullptr;
-	
-
-	//UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	//UImage* Skill1Image = nullptr;
-
-	//UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	//UImage* Skill2Image = nullptr;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UImage* Skill1MaskImage = nullptr;
@@ -72,7 +63,8 @@ public:
 	UCanvasPanelSlot * Skill1MaskImageSlot;
 	UCanvasPanelSlot * Skill2MaskImageSlot;
 
-	/*void UpdatePopulationTexts(int NumberOfWomen, int NumberOfMen);*/
+	void Reset();
+
 	void OnGameOver(EGameOverType GameOverType);
 
 	void UpdateSkillMaskImage(int SkillID, float Percent);

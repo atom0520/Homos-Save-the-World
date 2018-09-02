@@ -55,4 +55,5 @@ protected:
 	USkeletalMeshComponent* SkeletalMeshComponent = nullptr;
 
 	UWidgetComponent* CondomBuffComponent = nullptr;
+
 };

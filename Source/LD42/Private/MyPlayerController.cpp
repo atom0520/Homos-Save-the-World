@@ -6,6 +6,10 @@
 #include "GUIWidget.h"
 #include "Components/Image.h"
 #include "Human.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/CapsuleComponent.h"
+#include "MyStaticLibrary.h"
+#include "Camera/CameraComponent.h"
 
 AMyPlayerController::AMyPlayerController()
 {
@@ -18,6 +22,15 @@ void AMyPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	GameMode = Cast<ALD42GameModeBase>(GetWorld()->GetAuthGameMode());
+	
+	ControlledPlayer = Cast<AMyPawn>(GetPawn());
+
+	TSet<UActorComponent*> ControlledPlayerComponents = ControlledPlayer->GetComponents();
+	for (UActorComponent* ControlledPlayerComponent : ControlledPlayerComponents){
+		if (ControlledPlayerComponent->GetName() == UMyStaticLibrary::PlayerCameraComponentName) {
+			PlayerCameraComponent = Cast<UCameraComponent>(ControlledPlayerComponent);
+		}
+	}
 
 	TargetGenderImage = GameMode->GUIWidget->TargetGenderImage;
 }
@@ -78,19 +91,82 @@ void AMyPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction<FIntDelegate>("Skill1", EInputEvent::IE_Pressed, this, &AMyPlayerController::TriggerSkill, 1);
-	InputComponent->BindAction<FIntDelegate>("Skill2", EInputEvent::IE_Pressed, this, &AMyPlayerController::TriggerSkill, 2);
+	InputComponent->BindAxis("MoveForward", this, &AMyPlayerController::MoveForward);
+	InputComponent->BindAxis("MoveRight", this, &AMyPlayerController::MoveRight);
+	InputComponent->BindAxis("Turn", this, &AMyPlayerController::Turn);
+	InputComponent->BindAxis("LookUp", this, &AMyPlayerController::LookUp);
+
+	InputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &AMyPlayerController::OnPressFireButton);
+	InputComponent->BindAction("Quit", EInputEvent::IE_Pressed, this, &AMyPlayerController::OnPressQuitButton);
+	InputComponent->BindAction<FIntDelegate>("Skill1", EInputEvent::IE_Pressed, this, &AMyPlayerController::OnPressSkillButton, 1);
+	InputComponent->BindAction<FIntDelegate>("Skill2", EInputEvent::IE_Pressed, this, &AMyPlayerController::OnPressSkillButton, 2);
 }
 
-void AMyPlayerController::TriggerSkill(int SkillID) {
+
+void AMyPlayerController::MoveForward(float AxisValue) {
+	ControlledPlayer->CapsuleComponent->AddForce(ControlledPlayer->GetActorForwardVector()*AxisValue*MoveInputMultiplier);
+}
+
+void AMyPlayerController::MoveRight(float AxisValue) {
+	ControlledPlayer->CapsuleComponent->AddForce(ControlledPlayer->GetActorRightVector()*AxisValue*MoveInputMultiplier);
+}
+
+void AMyPlayerController::Turn(float AxisValue) {
+	FRotator AddedRotation = FRotator::ZeroRotator;
+	AddedRotation.Yaw = TurnInputMultiplier * AxisValue;
+	ControlledPlayer->AddActorLocalRotation(AddedRotation);
+}
+
+void AMyPlayerController::LookUp(float AxisValue) {
+	FRotator AddedRotation = FRotator::ZeroRotator;
+	AddedRotation.Pitch = TurnInputMultiplier * AxisValue;
+	PlayerCameraComponent->AddLocalRotation(AddedRotation);
+}
+
+void AMyPlayerController::OnPressFireButton() {
+	if (IsValid(AimedHuman)) {
+		AimedHuman->ChangeGender();
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			ChangeGenderSound,
+			AimedHuman->GetActorLocation(),
+			FRotator::ZeroRotator);
+	}
+}
+
+void AMyPlayerController::OnPressQuitButton() {
+	ConsoleCommand("quit");
+}
+
+void AMyPlayerController::OnPressSkillButton(int SkillID) {
 	if (GameMode->GameState != EGameState::InGame) return;
 
 	switch (SkillID) {
 	case 1:
+		if (GameMode->CondomGiveawayCTTimer > 0) return;
+
 		GameMode->ActivateCondomGiveaway();
+
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			CondomGiveawaySound,
+			//GameMode->FailureSound,
+			GetPawn()->GetActorLocation(),
+			FRotator::ZeroRotator);
+
 		break;
 	case 2:
+		if (GameMode->OneChildPolicyCTTimer > 0) return;
+
 		GameMode->ActivateOneChildPolicy();
+
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			OneChildPolicySound,
+			GetPawn()->GetActorLocation(),
+			FRotator::ZeroRotator);
+
 		break;
 	}
 }
+

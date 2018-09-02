@@ -13,6 +13,22 @@ void UGUIWidget::NativeConstruct(){
 	
 	Skill1MaskImageSlot = Cast<UCanvasPanelSlot>(Skill1MaskImage->Slot);
 	Skill2MaskImageSlot = Cast<UCanvasPanelSlot>(Skill2MaskImage->Slot);
+	
+	Reset();
+}
+
+void UGUIWidget::Reset() {
+	CrosshairImage->SetVisibility(ESlateVisibility::Visible);
+	TargetGenderImage->SetVisibility(ESlateVisibility::Hidden);
+	GameOverFailureTitleText->SetVisibility(ESlateVisibility::Hidden);
+	GameOverSuccessTitleText->SetVisibility(ESlateVisibility::Hidden);
+	GameOverSubtitleText->SetVisibility(ESlateVisibility::Hidden);
+	RestartButton->SetVisibility(ESlateVisibility::Hidden);
+	OneChildPolicySloganText->SetVisibility(ESlateVisibility::Hidden);
+	OneChildPolicySpeakerImage->SetVisibility(ESlateVisibility::Hidden);
+
+	UpdateSkillMaskImage(1, 0);
+	UpdateSkillMaskImage(2, 0);
 }
 
 void UGUIWidget::OnGameOver(EGameOverType GameOverType) {
@@ -78,12 +94,5 @@ void UGUIWidget::OnDeactivateOneChildPolicy() {
 
 	OneChildPolicySloganText->SetVisibility(ESlateVisibility::Hidden);
 }
-//void UGUIWidget::UpdatePopulationTexts(int NumberOfMen, int NumberOfWomen) {
-//	NumberOfMenText = FString::FromInt(NumberOfMen);
-//	NumberOfWomenText = FString::FromInt(NumberOfWomen);
-//	
-//	NumberOfHumansText = FString::FromInt(NumberOfMen + NumberOfWomen);
-//}
-
 
 

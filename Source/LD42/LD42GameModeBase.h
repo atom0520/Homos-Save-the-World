@@ -78,11 +78,17 @@ public:
 	bool IsCondomGiveawayActive = false;
 	bool IsOneChildPolicyActive = false;
 
+	float CondomGiveawayCTTimer = 0.0f;
+	float OneChildPolicyCTTimer = 0.0f;
+
 	UPROPERTY(EditAnywhere)
 	int MinHumanChildNumber = 3;
 
 	UPROPERTY(EditAnywhere)
 	int MaxHumanChildNumber = 5;
+
+
+	
 
 private:
 	ALD42GameModeBase();
@@ -122,9 +128,7 @@ private:
 	float CondomGiveawayBuffTimer = 0.0f;
 
 	UPROPERTY(EditAnywhere)
-	float CondomGiveawayCTDuration = 16.0f;
-
-	float CondomGiveawayCTTimer = 0.0f;
+	float CondomGiveawayCTDuration = 16.0f;	
 
 	UPROPERTY(EditAnywhere)
 	float OneChildPolicyBuffDuration = 8.0f;
@@ -134,5 +138,12 @@ private:
 	UPROPERTY(EditAnywhere)
 	float OneChildPolicyCTDuration = 16.0f;
 
-	float OneChildPolicyCTTimer = 0.0f;
+	UPROPERTY(EditAnywhere)
+	USoundBase * FailureSound = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	USoundBase * SuccessSound = nullptr;
+
+	//UPROPERTY(EditAnywhere)
+	//USoundBase * RestartGameSound = nullptr;
 };

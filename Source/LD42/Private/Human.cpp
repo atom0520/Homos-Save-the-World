@@ -7,6 +7,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "LD42GameModeBase.h"
 #include "Components/WidgetComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void AHuman::BeginPlay() {
 	Super::BeginPlay();
@@ -16,6 +18,17 @@ void AHuman::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	if (GameMode->IsCondomGiveawayActive && Gender == 1) {
+		
+		FRotator NewCondomBuffRelativeRotation = UKismetMathLibrary::InverseTransformRotation(GetActorTransform(),
+			UKismetMathLibrary::FindLookAtRotation(
+				CondomBuffComponent->GetComponentLocation(),
+				UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorLocation()));
+
+		NewCondomBuffRelativeRotation.Pitch = 0;
+		NewCondomBuffRelativeRotation.Roll = 0;
+		
+		CondomBuffComponent->SetRelativeRotation(NewCondomBuffRelativeRotation);
+
 		CondomBuffComponent->SetVisibility(true);
 	}
 	else {
