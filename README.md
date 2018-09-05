@@ -18,4 +18,4 @@ An amusing FPS game made for Lumdum Dare 42.
 
 <br/>
 
-![Representative Image](RepresentativeImage.png)
+![Representative Image](RepresentativeGIF.gif)
